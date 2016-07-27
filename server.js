@@ -10,6 +10,9 @@ var app = express();
 require('dotenv').load();
 require('./app/config/passport')(passport);
 
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+
 mongoose.connect(process.env.MONGO_URI);
 
 app.use('/controllers', express.static(process.cwd() + '/app/controllers'));
