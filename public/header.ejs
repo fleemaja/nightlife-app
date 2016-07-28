@@ -1,0 +1,18 @@
+<header>
+    <nav class="navbar navbar-default">
+        <ul class="nav navbar-nav navbar-right">
+          <% if (user) { %>
+		    <li><a class="menu" href="/logout">Logout</a></li>
+		  <% } else { %>
+              <li id="github-login">
+                <a href="/auth/github">
+    				<div class="btn" id="login-btn">
+    					<img src="/public/img/github_32px.png" alt="github logo" />
+    					<p>LOGIN WITH GITHUB</p>
+    				</div>
+    			</a>
+    		  </li>
+    	  <% } %>
+        </ul>
+    </nav>
+</header>

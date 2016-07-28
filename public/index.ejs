@@ -5,9 +5,13 @@
 	<head>
 		<title>Nightlife Coordination</title>
 		
-		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
+		<link href="/public/css/clementine.css" rel="stylesheet" type="text/css">
 		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
 	</head>
+	
+	<%- include header.ejs %>
 
 	<body>
 		<div class="container">
@@ -17,7 +21,11 @@
 		</div>
 		
 		<div class="container">
-			<input type="text" placeholder="Enter Location" id="search-bar">
+			<% if (user) { %>
+				<input type="text" placeholder="Enter Location" value="<%= user.lastQuery %>" id="search-bar">
+			<% } else { %>
+			    <input type="text" placeholder="Enter Location" value="" id="search-bar">
+			<% } %>
 			<button id="go-time">Go</button>
 		</div>
 		
@@ -28,7 +36,7 @@
 	
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script>
-	    $('#go-time').click(function() {
+	    function updateResults() {
 	    	var location = $('#search-bar').val();
 	    	
 	    	$.ajax({
@@ -40,13 +48,23 @@
 			    	  var name = bar.name;
 			    	  var imgURL = bar.image_url;
 			    	  var snippet = bar.snippet;
+			    	  var goingNum = bar.attending.length;
 			    	  var html = "<div class=\"container\"><img src=\"" + imgURL + "\">";
-			    	  html += "<p>" + name + "</p>";
+			    	  html += "<h4>" + name + "</h4>";
+			    	  html += "<button>Going: " + goingNum + "</button>";
 			    	  html += "<p>" + snippet + "</p></div>";
 			    	  $('#results').append(html);
 			    	});
 			    }
 			  });
+	    }
+	    
+	    $('document').ready(function() {
+	    	updateResults();
+	    });
+	    
+	    $('#go-time').click(function() {
+			updateResults();
 	    });
 	</script>
 
