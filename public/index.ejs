@@ -22,7 +22,7 @@
 		
 		<div class="container">
 			<% if (user) { %>
-				<input type="text" placeholder="Enter Location" value="<%= user.lastQuery %>" id="search-bar">
+				<input type="text" placeholder="Enter Location" data-user="<%= user.id %>" value="<%= user.lastQuery %>" id="search-bar">
 			<% } else { %>
 			    <input type="text" placeholder="Enter Location" value="" id="search-bar">
 			<% } %>
@@ -36,28 +36,95 @@
 	
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script>
+	    var user = $('#search-bar').data("user");
+	    
 	    function updateResults() {
 	    	var location = $('#search-bar').val();
 	    	
-	    	$.ajax({
-			    url: "https://nightlife-app-fleemaja.c9users.io/api/" + encodeURI(location),
-			    dataType: "json",
-			    success: function(json) {
-			    	$('#results').empty();
-			    	json.forEach(function(bar) {
-			    	  var name = bar.name;
-			    	  var imgURL = bar.image_url;
-			    	  var snippet = bar.snippet;
-			    	  var goingNum = bar.attending.length;
-			    	  var html = "<div class=\"container\"><img src=\"" + imgURL + "\">";
-			    	  html += "<h4>" + name + "</h4>";
-			    	  html += "<button>Going: " + goingNum + "</button>";
-			    	  html += "<p>" + snippet + "</p></div>";
-			    	  $('#results').append(html);
-			    	});
-			    }
-			  });
+	    	if (location != "") {
+	    		
+		    	$.ajax({
+				    url: "https://nightlife-app-fleemaja.c9users.io/api/" + encodeURI(location),
+				    dataType: "json",
+				    success: function(json) {
+				    	$('#results').empty();
+				    	json.forEach(function(bar) {
+				    	  var name = bar.name;
+				    	  var imgURL = bar.image_url;
+				    	  var url = bar.url;
+				    	  var snippet = bar.snippet;
+				    	  var attending = bar.attending;
+				    	  var numGoing = attending.length;
+				    	  
+				    	  $.ajax({
+				    	  	url: "https://nightlife-app-fleemaja.c9users.io/bars/" + name,
+				    	  	dataType: 'json',
+						    data: { 
+						        "url": url
+						    },
+						    success: function(json2) {
+						    	if (json2.length === 1) {
+							    	attending = json2[0].attending;
+							    	numGoing = attending.length;
+						    	} else {
+						    		$.ajax({
+						    			type: 'POST',
+						    			url: "https://nightlife-app-fleemaja.c9users.io/bars/new",
+						    			data: {
+						    				"name": name,
+						    				"image_url": imgURL,
+						    				"url": url,
+						    				"snippet": snippet,
+						    				"attending": []
+						    			}
+						    		})
+						    	}
+						    	var html = "<div class='container' id='bar-info'><div class='col-md-3'><img src=" + imgURL + "></div>";
+						    	    html += "<div id='bar-display' class='col-md-7'><h4><a href=" + url + " target='_blank'>" + name + "</a></h4>";
+						    	    if (user) {
+						    	    	html += "<button class='going' data-clicks='0' data-name=" + name + " data-url=" + url + " data-attending=" + $.inArray(user, attending) + ">Going: " + numGoing + "</button>";
+						    	    } else {
+						    	        html += "<a href='/auth/github'><button class='going' data-name=" + name + " data-url=" + url + ">Going: " + numGoing + "</a></button>";
+						    	    }
+						    	    html += "<p id='snippet'>" + snippet + "</p></div></div>";
+						    	    $('#results').append(html);
+						    }
+				    	  })
+				    	});
+				    }
+				  });
+	    	}
 	    }
+	    
+	    $(document).on('click', '.going', function(e){
+	    	if (user) {
+	    		var clicks = parseInt(e.target.getAttribute('data-clicks')) + 1;
+	    		e.target.setAttribute('data-clicks', clicks);
+				var attending = parseInt(e.target.getAttribute('data-attending'));
+				var url = e.target.getAttribute('data-url');
+				var name = e.target.getAttribute('data-name');
+				var goingNum = parseInt($(e.target).text().split(" ")[1]);
+				
+				var whichIdx = clicks % 2;
+				if (attending > -1) {
+					var dirs = [0, 1, -1];
+				} else {
+					var dirs = [0, -1, 1];
+				}
+				
+				
+		    	$.ajax({
+					type: 'POST',
+					url: "https://nightlife-app-fleemaja.c9users.io/bars/editAttending",
+					data: {
+					  "url": url,
+					  "user": user
+					}
+		        });
+		        
+		        $(e.target).text("Going: " + (goingNum + dirs[whichIdx + 1]));
+	    	}
+		});
 	    
 	    $('document').ready(function() {
 	    	updateResults();

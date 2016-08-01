@@ -3,6 +3,7 @@
 var path = process.cwd();
 var yelpnode = require('yelp');
 var UserController = require(path + '/app/controllers/userController.server.js');
+var BarController = require(path + '/app/controllers/barController.server.js');
 
 module.exports = function (app, passport) {
 
@@ -52,6 +53,27 @@ module.exports = function (app, passport) {
 	          return res.status(200).json(extBars);
 	    	});
         })
+        
+    app.route('/bars')
+        .get(function(req, res) {
+        	BarController.index(req, res);
+        });
+        
+    app.route('/bars/:name')
+        .get(function(req, res) {
+        	BarController.findByURL(req, res);
+        });
+        
+    app.route('/bars/editAttending')
+        .post(function(req, res) {
+        	BarController.editAttending(req, res);
+        });
+        
+        
+    app.route('/bars/new')
+        .post(function(req, res) {
+        	BarController.create(req, res);
+        });
 
 	app.route('/logout')
 		.get(function (req, res) {

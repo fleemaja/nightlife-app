@@ -2,7 +2,7 @@
     <nav class="navbar navbar-default">
         <ul class="nav navbar-nav navbar-right">
           <% if (user) { %>
-		    <li><a class="menu" href="/logout">Logout</a></li>
+		    <li id="github-logout"><a class="menu" href="/logout">Logout</a></li>
 		  <% } else { %>
               <li id="github-login">
                 <a href="/auth/github">

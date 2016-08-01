@@ -7,6 +7,41 @@ body {
     border: none;
 }
 
+#bar-display {
+    text-align: left;
+    margin-top: 20px;
+}
+
+#login-btn,
+#github-logout {
+    margin-right: 40px;
+}
+
+#bar-info {
+    margin: 40px;
+}
+
+.going {
+    float: right;
+}
+
+h3 {
+    color: gray;
+    margin-bottom: 20px;
+}
+
+h4 {
+    display: inline;
+}
+
+img {
+    float: right;
+}
+
+#snippet {
+    text-align: left;
+}
+
 @media (max-width: 800px) {
     .navbar-header {
         float: left;
