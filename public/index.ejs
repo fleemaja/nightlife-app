@@ -37,6 +37,7 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script>
 	    var user = $('#search-bar').data("user");
+	    var appURL = "https://boiling-cove-97266.herokuapp.com/";
 	    
 	    function updateResults() {
 	    	var location = $('#search-bar').val();
@@ -44,7 +45,7 @@
 	    	if (location != "") {
 	    		
 		    	$.ajax({
-				    url: "https://nightlife-app-fleemaja.c9users.io/api/" + encodeURI(location),
+				    url: "https://boiling-cove-97266.herokuapp.com/api/" + encodeURI(location),
 				    dataType: "json",
 				    success: function(json) {
 				    	$('#results').empty();
@@ -57,7 +58,7 @@
 				    	  var numGoing = attending.length;
 				    	  
 				    	  $.ajax({
-				    	  	url: "https://nightlife-app-fleemaja.c9users.io/bars/" + name,
+				    	  	url: "https://boiling-cove-97266.herokuapp.com/bars/" + name,
 				    	  	dataType: 'json',
 						    data: { 
 						        "url": url
@@ -69,7 +70,7 @@
 						    	} else {
 						    		$.ajax({
 						    			type: 'POST',
-						    			url: "https://nightlife-app-fleemaja.c9users.io/bars/new",
+						    			url: "https://boiling-cove-97266.herokuapp.com/bars/new",
 						    			data: {
 						    				"name": name,
 						    				"image_url": imgURL,
@@ -115,7 +116,7 @@
 				
 		    	$.ajax({
 					type: 'POST',
-					url: "https://nightlife-app-fleemaja.c9users.io/bars/editAttending",
+					url: "https://boiling-cove-97266.herokuapp.com/bars/editAttending",
 					data: {
 					  "url": url,
 					  "user": user
